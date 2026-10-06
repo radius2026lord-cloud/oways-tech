@@ -1,0 +1,5 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {phone,validateAnswers,id} from '../server/validation.js';
+test('international phone validation prevents bare/local numbers',()=>{assert.equal(phone('+963 999-123456'),'+963999123456');assert.throws(()=>phone('0999123456'));assert.throws(()=>phone('+00123'))});
+test('required and email fields validated server-side',()=>{const r=[{field_key:'email',label:'البريد',required:true,input_type:'email'}];assert.throws(()=>validateAnswers(r,{}));assert.throws(()=>validateAnswers(r,{email:'bad'}));assert.deepEqual(validateAnswers(r,{email:'a@example.com',unknown:'discard'}),{email:'a@example.com'})});
+test('unsafe URLs and invalid choices rejected',()=>{assert.throws(()=>validateAnswers([{field_key:'link',input_type:'url'}],{link:'javascript:alert(1)'}));assert.throws(()=>validateAnswers([{field_key:'plan',input_type:'select',options_json:['a']}],{plan:'b'}))});
+test('SQL identifier inputs must be numeric ids',()=>{assert.throws(()=>id('1 OR 1=1'));assert.equal(id('12'),'12')});
