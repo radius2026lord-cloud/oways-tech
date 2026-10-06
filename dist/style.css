@@ -22,3 +22,5 @@ dialog[open]{animation:dialog-in var(--motion-base) var(--ease-out) both}dialog[
 @media(max-width:1200px){header .nav{flex-wrap:wrap;padding-block:12px;gap:12px}header .nav nav{order:3;width:100%;justify-content:center}}
 @media(max-width:760px){header .nav nav{width:100%;top:100%;padding:22px}.nav-actions .account-card{display:flex}.nav-actions .account-card .account-info strong{max-width:95px}.nav-actions{gap:7px}.account-card{padding:6px 8px;gap:7px}.account-avatar{width:27px;height:27px}.account-info small{display:none}.account-signout{font-size:10px;padding-right:7px}.nav:has(.signed-in) .nav-actions{flex-wrap:wrap;justify-content:flex-end}.nav:has(.signed-in)>.brand{flex:1}.nav:has(.signed-in)>.nav-actions{flex:1 1 100%;justify-content:space-between}.nav:has(.signed-in) .account-card{flex:1}.account-feedback{position:static;white-space:normal}}
 @media(max-width:380px){.nav-actions{flex:1 1 100%;justify-content:space-between}.nav-actions .account-card{flex:1}.account-info strong{max-width:150px}}
+
+.catalog-image{display:block;width:100%;aspect-ratio:8/5;object-fit:cover;border-radius:12px;margin-bottom:18px;background:#152c40}
