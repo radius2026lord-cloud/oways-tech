@@ -177,3 +177,27 @@
 @media(max-width:760px){.service-tools{align-items:stretch;flex-direction:column;gap:12px}.service-search{grid-template-columns:1fr;padding:14px}.admin-service-card{padding:18px}.admin-page #service-form>[data-service-step="0"]{grid-template-columns:1fr}.service-package-row{flex-wrap:wrap}.package-price{text-align:right}}
 
 .admin-notice{cursor:pointer}.admin-notice:focus-visible{outline:2px solid var(--cyan);outline-offset:4px}
+
+/* Category entry beside the service form. */
+.category-choice{min-width:0}.category-choice>label{margin-top:10px}
+.category-choice-controls{display:flex;align-items:flex-start;gap:8px}
+.category-choice-controls select{flex:1;min-width:0}
+.admin-page .category-choice-controls .button{width:auto;min-height:44px;flex-shrink:0;white-space:nowrap;margin:7px 0 14px;padding:8px 12px;font-size:11px}
+.quick-category-dialog{width:min(480px,calc(100% - 32px));padding:24px}
+.quick-category-dialog form{padding:0;border:0;background:none}
+.quick-category-dialog p{font-size:13px}
+.quick-category-dialog input,.quick-category-dialog textarea{margin-top:7px}
+#quick-category-feedback{color:#ffc6ab;min-height:20px;margin:0 0 10px}
+.admin-page select{cursor:pointer;background-color:#091827;border-color:#354b61;border-radius:10px;transition:border-color var(--motion-base),box-shadow var(--motion-base)}
+.admin-page select:hover{border-color:#64d8ff80}
+@supports (appearance:base-select){
+ .admin-page select,.admin-page select::picker(select){appearance:base-select}
+ .admin-page select::picker(select){background:#102235;color:var(--text);border:1px solid #3a5972;border-radius:12px;padding:6px;box-shadow:0 14px 40px #0006;max-height:280px;overflow:auto;opacity:0;transform:translateY(-6px);transition:opacity 180ms,transform 180ms,display 180ms allow-discrete,overlay 180ms allow-discrete}
+ .admin-page select::picker(select):popover-open{opacity:1;transform:translateY(0)}
+ @starting-style{.admin-page select::picker(select):popover-open{opacity:0;transform:translateY(-6px)}}
+ .admin-page select option{padding:10px 12px;border-radius:7px;font-size:13px;cursor:pointer}
+ .admin-page select option:hover,.admin-page select option:checked{background:#1a3d53;color:var(--cyan)}
+ .admin-page select::picker-icon{color:var(--cyan);transition:rotate 180ms}
+ .admin-page select:open::picker-icon{rotate:180deg}
+}
+@media(max-width:560px){.category-choice-controls{flex-wrap:wrap}.category-choice-controls select{flex-basis:100%;margin-bottom:0!important}.admin-page .category-choice-controls .button{margin:0 0 14px}}
