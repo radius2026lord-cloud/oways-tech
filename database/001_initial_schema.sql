@@ -7,7 +7,7 @@ USE oways_tech;
 CREATE TABLE users (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
  full_name VARCHAR(160) NOT NULL,
- phone VARCHAR(16) CHARACTER SET ascii NOT NULL UNIQUE COMMENT 'International E.164, including +',
+ phone VARCHAR(16) CHARACTER SET ascii NULL UNIQUE COMMENT 'International E.164, including +',
  phone_verified_at DATETIME NULL,
  role ENUM('customer','admin') NOT NULL DEFAULT 'customer',
  status ENUM('active','suspended','closed') NOT NULL DEFAULT 'active',
@@ -312,3 +312,20 @@ CREATE TABLE audit_logs (
 -- 10. Never collect account passwords or login OTPs as service answers. Original provider handles login.
 -- 11. Do not infer message delivery from opening WhatsApp. Save the order before opening it.
 -- 12. Customer-facing queries must exclude internal notes; only admins may update settings/catalog/statuses.
+
+-- Admin username login and manual payment confirmation (Oways Tech only).
+CREATE TABLE admin_credentials (
+ user_id BIGINT UNSIGNED PRIMARY KEY,
+ username VARCHAR(64) CHARACTER SET ascii NOT NULL UNIQUE,
+ password_hash VARCHAR(200) CHARACTER SET ascii NOT NULL,
+ FOREIGN KEY(user_id) REFERENCES users(id)
+) ENGINE=InnoDB;
+CREATE TABLE manual_payment_confirmations (
+ order_id BIGINT UNSIGNED PRIMARY KEY,
+ confirmed_by BIGINT UNSIGNED NOT NULL,
+ amount DECIMAL(12,2) NOT NULL,
+ currency CHAR(3) CHARACTER SET ascii NOT NULL,
+ confirmed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY(order_id) REFERENCES orders(id),
+ FOREIGN KEY(confirmed_by) REFERENCES users(id)
+) ENGINE=InnoDB;

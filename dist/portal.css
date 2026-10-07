@@ -220,3 +220,5 @@
 .contact-preview-row span{font-size:13px;overflow-wrap:anywhere;white-space:pre-line;text-align:right}
 @media(max-width:1100px){.contact-editor-layout{grid-template-columns:1fr}.contact-live-preview{margin:0 0 20px}#contact-preview-items{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}}
 @media(max-width:560px){#contact-form fieldset{padding:14px}#contact-preview-items{grid-template-columns:1fr}.contact-save-actions .button{width:100%}}
+
+.admin-login-screen{min-height:100dvh;display:grid;place-items:center;padding:24px}.admin-login-card{width:min(100%,480px);display:grid;gap:18px}.admin-login-card form{display:grid;gap:18px}.admin-login-card label{display:grid;gap:8px}.admin-login-card input{width:100%;min-height:48px}.admin-login-card .remember-choice{display:flex;align-items:center;gap:10px}.remember-choice input{width:18px;min-height:18px}.admin-login-card #login-feedback{color:#fda4af;padding:12px;background:#fb71851a;border-radius:12px}.payment-confirmation{padding:18px;border:1px solid #38bdf833;border-radius:16px;margin:18px 0}.admin-login-card .brand{margin-bottom:10px}
