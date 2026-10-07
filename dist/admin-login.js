@@ -1,4 +1,5 @@
-import {api} from './api.js';
+import './api.js';
+const api=(url,data)=>window.OwaysAPI.request(url,data);
 const form=document.querySelector('#admin-login-form'),feedback=document.querySelector('#login-feedback'),button=form.querySelector('[type="submit"]'),label=document.querySelector('#login-button-label'),toggle=document.querySelector('#toggle-password'),password=form.elements.password;
 api('/api/auth/me').then(({user})=>{if(user.role==='admin')location.replace('/admin')}).catch(()=>{});
 toggle.onclick=()=>{const visible=password.type==='password';password.type=visible?'text':'password';toggle.setAttribute('aria-pressed',String(visible));toggle.setAttribute('aria-label',visible?'إخفاء كلمة المرور':'إظهار كلمة المرور')};
