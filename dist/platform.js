@@ -36,7 +36,7 @@ document.querySelector('#renew-form').onsubmit=e=>{e.preventDefault();location.h
    info.append(label,text);item.append(icon,info);
    if(key==='email')item.href='mailto:'+value;
    if(key==='phone')item.href='tel:'+value.replace(/[^+0-9]/g,'');
-   if(key==='whatsapp'){item.href='/account?intent=support';item.dataset.contact='مرحبًا أويس تك، أرغب في التواصل مع الدعم';item.title='التواصل عبر واتساب'}
+   if(key==='whatsapp'){item.href='https://wa.me/'+value.replace(/[^0-9]/g,'');item.target='_blank';item.rel='noopener noreferrer';item.title='التواصل عبر واتساب'}
    grid.append(item);
   }
   if(grid.children.length)document.querySelector('.footer-top').append(block);

@@ -55,3 +55,11 @@ dialog[open]{animation:dialog-in var(--motion-base) var(--ease-out) both}dialog[
 a.contact-detail:hover{border-color:#64d8ff80;background:#132b40}
 @media(max-width:900px){.contact-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.contact-grid{grid-template-columns:1fr}.contact-detail{padding:14px}.footer-top>.footer-contact{padding-top:20px}}
+
+/* Gentle hover feedback for contact cards. */
+@media(hover:hover) and (pointer:fine){
+.contact-detail:hover{transform:scale(1.025);border-color:#64d8ff80;box-shadow:0 8px 24px #0003}
+}
+.contact-detail{transition:transform var(--motion-base) var(--ease-out),border-color var(--motion-base),background var(--motion-base),box-shadow var(--motion-base)}
+a.contact-detail{cursor:pointer}
+@media(prefers-reduced-motion:reduce){.contact-detail:hover{transform:none}}
