@@ -31,9 +31,51 @@ async function selectAuthMode(mode){
 $('#switch-auth-mode').onclick=e=>{e.preventDefault();selectAuthMode(authMode==='signup'?'login':'signup')};applyAuthMode(params.get('mode')==='login'?'login':'signup');
 
 const callingCountries=[['SY','سوريا','963'],['LB','لبنان','961'],['JO','الأردن','962'],['IQ','العراق','964'],['SA','السعودية','966'],['AE','الإمارات','971'],['KW','الكويت','965'],['QA','قطر','974'],['BH','البحرين','973'],['OM','عُمان','968'],['YE','اليمن','967'],['PS','فلسطين','970'],['EG','مصر','20'],['SD','السودان','249'],['LY','ليبيا','218'],['TN','تونس','216'],['DZ','الجزائر','213'],['MA','المغرب','212'],['TR','تركيا','90'],['DE','ألمانيا','49'],['NL','هولندا','31'],['RO','رومانيا','40'],['FR','فرنسا','33'],['GB','المملكة المتحدة','44'],['US','الولايات المتحدة','1'],['CA','كندا','1'],['AU','أستراليا','61'],['OTHER','مفتاح آخر','']];
-$('#country-code').innerHTML=callingCountries.map(([iso,name,code])=>'<option value="'+iso+'">'+name+(code?' (+'+code+')':'')+'</option>').join('');
+
+const countryLabel=([iso,name,code])=>name+(code?' (+'+code+')':'');
+$('#country-code').innerHTML=callingCountries.map(c=>'<option value="'+c[0]+'">'+countryLabel(c)+'</option>').join('');
+$('#country-options').innerHTML=callingCountries.map(c=>'<option value="'+countryLabel(c)+'"></option>').join('');
+function digits(value){return value.replace(/[٠-٩۰-۹]/g,c=>String(c.charCodeAt(0)>=1776?c.charCodeAt(0)-1776:c.charCodeAt(0)-1632)).replace(/[^0-9]/g,'')}
 let suggested='';for(const language of navigator.languages||[navigator.language]){try{const region=new Intl.Locale(language).region;if(callingCountries.some(c=>c[0]===region)){suggested=region;break}}catch{}}
-$('#country-code').value=suggested||'SY';$('#country-hint').textContent=suggested?'اختيار مبدئي حسب لغة المتصفح؛ عدّله إذا لزم.':'اختر الدولة الصحيحة لرقمك.';
+let selectedCountry=callingCountries.find(c=>c[0]===(suggested||'SY')),previousCode=selectedCountry[2];
+$('#country-code').value=selectedCountry[0];$('#country-picker').value=countryLabel(selectedCountry);$('#phone-number').value=previousCode;
+$('#country-hint').textContent='ابحث عن الدولة، ثم أكمل رقم هاتفك بعد المفتاح. أرقام فقط.';
 const customLabel=document.createElement('label');customLabel.className='custom-calling-code';customLabel.hidden=true;customLabel.innerHTML='مفتاح الدولة<input id="custom-country-code" inputmode="numeric" dir="ltr" placeholder="مثال: 39" maxlength="3">';$('.phone-field').append(customLabel);
-$('#country-code').onchange=()=>{customLabel.hidden=$('#country-code').value!=='OTHER';$('#country-hint').textContent='أدخل رقمك المحلي، أو الرقم الدولي كاملًا مع +.'};
-function internationalPhone(){let number=$('#phone-number').value.trim().replace(/[٠-٩۰-۹]/g,c=>{const n=c.charCodeAt(0);return String(n>=1776?n-1776:n-1632)}).replace(/[\s()-]/g,'');if(number.startsWith('00'))number='+'+number.slice(2);if(number.startsWith('+')){if(!/^\+[1-9]\d{7,14}$/.test(number))throw Error('رقم الهاتف الدولي غير صالح.');return number}const country=callingCountries.find(c=>c[0]===$('#country-code').value);const code=country[0]==='OTHER'?$('#custom-country-code').value.trim().replace(/^\+/,''):country[2];if(!/^[1-9]\d{0,2}$/.test(code))throw Error('مفتاح الدولة غير صالح.');if(country[0]!=='OTHER')number=number.replace(/^0+/,'');const full='+'+code+number;if(!/^\+[1-9]\d{7,14}$/.test(full))throw Error('تحقق من مفتاح الدولة ورقم الهاتف.');return full}
+function changeCountry(country){
+ let number=digits($('#phone-number').value);
+ if(previousCode&&number.startsWith(previousCode))number=number.slice(previousCode.length);
+ selectedCountry=country;$('#country-code').value=country[0];previousCode=country[2];
+ customLabel.hidden=country[0]!=='OTHER';
+ $('#phone-number').value=(previousCode+number.replace(/^0+/,'' )).slice(0,15);
+ $('#country-picker').setCustomValidity('');
+}
+$('#country-picker').addEventListener('input',()=>{
+ const country=callingCountries.find(c=>countryLabel(c)===$('#country-picker').value);
+ $('#country-picker').setCustomValidity(country?'':'اختر دولة من نتائج البحث.');
+ if(country)changeCountry(country);
+});
+$('#country-picker').addEventListener('focus',()=>$('#country-picker').select());
+$('#country-picker').addEventListener('blur',()=>{
+ const country=callingCountries.find(c=>countryLabel(c)===$('#country-picker').value);
+ if(!country){$('#country-picker').value=countryLabel(selectedCountry);$('#country-picker').setCustomValidity('')}
+});
+$('#phone-number').addEventListener('input',()=>{
+ const input=$('#phone-number'),position=input.selectionStart,raw=input.value;
+ const before=digits(raw.slice(0,position)).length;
+ input.value=digits(raw).slice(0,15);input.setSelectionRange(before,before);
+});
+$('#custom-country-code').addEventListener('input',()=>{
+ const input=$('#custom-country-code');input.value=digits(input.value).slice(0,3);
+ let number=digits($('#phone-number').value);
+ if(previousCode&&number.startsWith(previousCode))number=number.slice(previousCode.length);
+ previousCode=input.value;$('#phone-number').value=(previousCode+number).slice(0,15);
+});
+function internationalPhone(){
+ const number=digits($('#phone-number').value),code=selectedCountry[0]==='OTHER'?$('#custom-country-code').value:selectedCountry[2];
+ if(!/^[1-9][0-9]{0,2}$/.test(code))throw Error('مفتاح الدولة غير صالح.');
+ if(!number.startsWith(code))throw Error('يجب أن يبدأ رقم الهاتف بمفتاح الدولة '+code+'.');
+ const national=number.slice(code.length).replace(/^0+/,'');
+ const full='+'+code+national;
+ if(!/^\+[1-9][0-9]{7,14}$/.test(full)||!national)throw Error('أكمل رقم هاتفك بعد مفتاح الدولة.');
+ return full;
+}

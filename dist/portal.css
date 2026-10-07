@@ -82,3 +82,11 @@
 .account-page .verify-form input{font-size:22px;letter-spacing:6px}
 @media(max-width:900px){.account-page .auth-card{grid-template-columns:1fr}}
 @media(max-width:560px){.account-page .auth-form{gap:12px}.account-page .phone-entry{grid-template-columns:minmax(110px,.9fr) minmax(0,1.15fr);gap:8px}.account-page .phone-entry input,.account-page .phone-entry select{width:100%;padding-inline:8px}.account-page .phone-entry input::placeholder{font-size:10px}}
+
+/* Country search and phone number share identical sizing and spacing. */
+.account-page .phone-entry{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+.account-page .phone-entry #country-picker,.account-page .phone-entry #phone-number{height:48px;min-height:48px;width:100%;min-width:0;margin:0;padding:0 12px;border-radius:10px;font-size:13px}
+.account-page .phone-entry #country-picker{grid-column:1;color:#dce7f2}
+.account-page .phone-entry #phone-number{grid-column:2;text-align:left;letter-spacing:.5px}
+.account-page #country-picker::placeholder,.account-page #phone-number::placeholder{font-size:11px;letter-spacing:0}
+@media(max-width:380px){.account-page .phone-entry{grid-template-columns:1fr}.account-page .phone-entry #country-picker,.account-page .phone-entry #phone-number{grid-column:1}}
