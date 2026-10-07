@@ -30,3 +30,54 @@
 @media(max-width:380px){.admin-login-screen{padding:16px 12px}.admin-login-card{padding:24px 20px}.admin-login-heading h1{font-size:23px}}
 @media(max-height:650px) and (min-width:721px){.admin-login-screen{padding-block:18px}.admin-login-card{padding:28px 36px}.admin-login-heading{margin-bottom:18px}.admin-login-symbol{display:none}.admin-intro-art{height:130px;margin:16px 0}}
 @media(prefers-reduced-motion:reduce){.admin-auth-page *, .admin-auth-page *::before,.admin-auth-page *::after{animation:none!important;transition:none!important}.admin-login-submit:hover:enabled{transform:none}}
+
+/* Fit the login card to the available viewport, including mobile browser chrome. */
+.admin-auth-page{overflow-x:clip}
+.admin-login-screen{padding:clamp(12px,3dvh,32px) max(12px,env(safe-area-inset-right)) clamp(12px,3dvh,32px) max(12px,env(safe-area-inset-left));padding-top:max(clamp(12px,3dvh,32px),env(safe-area-inset-top));padding-bottom:max(clamp(12px,3dvh,32px),env(safe-area-inset-bottom))}
+.admin-login-shell{max-width:calc(100vw - 24px)}
+.admin-login-card{padding-block:clamp(22px,4dvh,44px)}
+@media(max-height:740px){
+ .admin-login-heading{margin-bottom:20px}
+ .admin-login-symbol{margin-bottom:12px;width:40px;height:40px}
+ .admin-mobile-brand{margin-bottom:20px}
+ #admin-login-form{gap:16px}
+ .admin-back-link{margin-top:18px}
+ .admin-login-intro{padding-block:28px}
+ .admin-intro-art{height:140px;margin:16px 0}
+}
+@media(max-height:620px){
+ .admin-login-screen{padding-block:12px}
+ .admin-login-card{padding-block:22px}
+ .admin-login-symbol{display:none}
+ .admin-mobile-brand{margin-bottom:14px;font-size:18px}
+ .admin-login-heading{margin-bottom:16px}
+ .admin-login-heading h1{font-size:24px;margin-block:4px}
+ #admin-login-form{gap:12px}
+ .admin-auth-field{gap:6px}
+ .admin-auth-input{height:48px}
+ .admin-login-submit{min-height:48px}
+ .admin-back-link{margin-top:14px}
+ .admin-intro-art{height:110px;margin:12px 0}
+ .admin-art-ring{width:110px;height:110px;box-shadow:0 0 0 16px #64d8ff05}
+ .admin-art-core{width:68px;height:68px;border-radius:20px}
+ .admin-intro-copy h2{font-size:26px}
+ .admin-intro-footer{padding-top:18px}
+}
+@media(max-height:480px){
+ .admin-login-screen{padding-block:8px}
+ .admin-login-card{padding-block:14px}
+ .admin-mobile-brand{display:none}
+ .admin-login-heading{margin-bottom:10px}
+ .admin-login-heading .admin-auth-kicker,.admin-login-heading>p{display:none}
+ .admin-login-heading h1{font-size:22px;margin:0}
+ #admin-login-form{gap:9px}
+ .admin-auth-field{gap:4px}
+ .admin-auth-input{height:44px}
+ .admin-login-submit{min-height:44px;padding-block:9px}
+ .admin-remember{min-height:26px}
+ .admin-back-link{margin-top:10px}
+ .admin-intro-art{display:none}
+ .admin-intro-copy{margin-top:22px}
+ .admin-intro-copy h2{font-size:24px}
+ #login-feedback{padding:8px 12px}
+}
