@@ -24,3 +24,5 @@ dialog[open]{animation:dialog-in var(--motion-base) var(--ease-out) both}dialog[
 @media(max-width:380px){.nav-actions{flex:1 1 100%;justify-content:space-between}.nav-actions .account-card{flex:1}.account-info strong{max-width:150px}}
 
 .catalog-image{display:block;width:100%;aspect-ratio:8/5;object-fit:cover;border-radius:12px;margin-bottom:18px;background:#152c40}
+
+.account-card.guest{background:var(--cyan);border-color:var(--cyan);padding:10px 16px;box-shadow:0 4px 18px #64d8ff15}.account-card.guest .account-info small{display:none}.account-card.guest .account-info strong{font-size:13px;color:#07111e}.account-card.guest .account-avatar{color:#07111e;background:#07111e12;width:28px;height:28px}.account-card.guest:hover{background:#92e4ff}.account-card.guest .account-feedback{color:#ffc6ab}
