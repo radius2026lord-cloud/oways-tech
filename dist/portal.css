@@ -61,3 +61,24 @@
 .account-page .auth-intro{padding:24px}
 .account-page .auth-symbol{display:none}
 }
+
+/* Aligned account fields, with a single readable form column. */
+.account-page .auth-card{grid-template-columns:.8fr 1.2fr;align-items:stretch}
+.account-page .auth-form,.account-page .auth-form.login-mode{grid-template-columns:minmax(0,1fr);gap:16px}
+.account-page .auth-fields{min-width:0}
+.account-page .auth-form>label,.account-page .phone-field label,.account-page .verify-form label{font-size:13px;line-height:1.5;color:#dce7f2;margin:0}
+.account-page .auth-form input:not([type=checkbox]),.account-page .phone-entry select,.account-page .verify-form input{height:48px;min-height:48px;padding:0 14px;border:1px solid #354b61;border-radius:10px;background:#091726;font-size:14px;line-height:normal;margin:8px 0 0;box-sizing:border-box}
+.account-page .auth-form input::placeholder{color:#8093a8;font-size:12px}
+.account-page .phone-entry{display:grid;grid-template-columns:minmax(125px,.9fr) minmax(0,1.3fr);gap:10px;margin-top:8px;align-items:stretch}
+.account-page .phone-entry select,.account-page .phone-entry input{width:100%;min-width:0;margin:0}
+.account-page .phone-entry select{font-size:12px;padding-inline:10px;cursor:pointer;color:#dce7f2}
+.account-page .phone-field small{margin-top:6px;line-height:1.5;text-align:right}
+.account-page .auth-form input:focus,.account-page .phone-entry select:focus,.account-page .verify-form input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #64d8ff16}
+.account-page .auth-form .remember-choice{margin-top:0;align-items:center;line-height:1.6}
+.account-page .auth-form .remember-choice input{height:17px;min-height:17px;width:17px;margin:0;padding:0;flex-shrink:0;border-radius:4px}
+.account-page .auth-submit{display:flex;flex-direction:column;align-items:stretch;gap:10px;padding-top:14px}
+.account-page .auth-submit p{font-size:11px;text-align:right}
+.account-page .auth-submit .button{width:100%;min-height:46px;margin:0}
+.account-page .verify-form input{font-size:22px;letter-spacing:6px}
+@media(max-width:900px){.account-page .auth-card{grid-template-columns:1fr}}
+@media(max-width:560px){.account-page .auth-form{gap:12px}.account-page .phone-entry{grid-template-columns:minmax(110px,.9fr) minmax(0,1.15fr);gap:8px}.account-page .phone-entry input,.account-page .phone-entry select{width:100%;padding-inline:8px}.account-page .phone-entry input::placeholder{font-size:10px}}

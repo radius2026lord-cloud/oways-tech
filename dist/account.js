@@ -6,8 +6,29 @@ async function listOrders(){const r=await api('/api/orders');$('#orders').innerH
 async function detail(id){const o=await api('/api/orders/'+id);$('#details').hidden=false;$('#details').innerHTML=`<h2>${E(o.public_reference)}</h2>${o.items.map(i=>`<h3>${E(i.package_snapshot.service_name)} — ${E(i.package_snapshot.name)}</h3><p>${E(states[i.fulfillment_status]||i.fulfillment_status)}</p>`).join('')}${o.updates.map(u=>`<p class="portal-note">${E(u.body)}</p>`).join('')}<button class="button" data-support="${E(o.id)}">متابعة الطلب مع الدعم ↗</button>`;$('#details').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}
 async function support(data){const r=await api('/api/support',data);$('#message-text').value=r.message;$('#whatsapp-link').hidden=!r.url;$('#no-whatsapp').hidden=!!r.url;if(r.url)$('#whatsapp-link').href=r.url;$('#support-message').showModal()}$('#general-support').onclick=()=>run(()=>support({reason:$('#support-reason').value}));$('#close-message').onclick=()=>$('#support-message').close();$('#copy-message').onclick=()=>run(async()=>{await navigator.clipboard.writeText($('#message-text').value);status('تم نسخ الرسالة.')});document.addEventListener('click',e=>{const d=e.target.closest('[data-details]'),s=e.target.closest('[data-support]');if(d)run(()=>detail(d.dataset.details));if(s)run(()=>support({order_id:s.dataset.support}))});run(async()=>{try{user=(await api('/api/auth/me')).user}catch(e){if(!e.message.includes('سجّل الدخول')&&!e.message.includes('انتهت الجلسة'))throw e}if(user)await member()});
 
-function selectAuthMode(mode){authMode=mode;const signup=mode==='signup';$('#full-name-field').hidden=!signup;const name=$('#full-name-field input');name.disabled=!signup;name.required=signup;$('#login').classList.toggle('login-mode',!signup);$('#auth-mode-prompt').textContent=signup?'لديك حساب بالفعل؟':'ليس لديك حساب؟';$('#switch-auth-mode').textContent=signup?'تسجيل الدخول':'إنشاء حساب';$('#switch-auth-mode').href=signup?'/account?mode=login':'/account?mode=signup';$('#auth-title').textContent=signup?'إنشاء حساب':'تسجيل الدخول';$('#auth-help').textContent=signup?'أدخل اسمك ورقم هاتفك لإنشاء حساب جديد.':'أدخل رقم هاتفك. لن يُطلب رمز جديد أثناء بقاء جلستك محفوظة.';$('#login button[type="submit"],#login .auth-submit button').textContent=signup?'إنشاء حساب والتحقق ←':'تسجيل الدخول برمز التحقق ←';status('')}
-$('#switch-auth-mode').onclick=e=>{e.preventDefault();selectAuthMode(authMode==='signup'?'login':'signup')};selectAuthMode(params.get('mode')==='login'?'login':'signup');
+function applyAuthMode(mode){authMode=mode;const signup=mode==='signup';$('#full-name-field').hidden=!signup;const name=$('#full-name-field input');name.disabled=!signup;name.required=signup;$('#login').classList.toggle('login-mode',!signup);$('#auth-mode-prompt').textContent=signup?'لديك حساب بالفعل؟':'ليس لديك حساب؟';$('#switch-auth-mode').textContent=signup?'تسجيل الدخول':'إنشاء حساب';$('#switch-auth-mode').href=signup?'/account?mode=login':'/account?mode=signup';$('#auth-title').textContent=signup?'إنشاء حساب':'تسجيل الدخول';$('#auth-help').textContent=signup?'أدخل اسمك ورقم هاتفك لإنشاء حساب جديد.':'أدخل رقم هاتفك. لن يُطلب رمز جديد أثناء بقاء جلستك محفوظة.';$('#login button[type="submit"],#login .auth-submit button').textContent=signup?'إنشاء حساب والتحقق ←':'تسجيل الدخول برمز التحقق ←';status('')}
+let authTransition=0,authAnimations=[];
+async function selectAuthMode(mode){
+ const version=++authTransition;
+ authAnimations.forEach(animation=>animation.cancel());authAnimations=[];
+ const fields=$('.auth-fields'),intro=$('.auth-intro'),card=$('#auth-panel');
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches||typeof fields.animate!=='function'){applyAuthMode(mode);return}
+ const oldHeight=card.getBoundingClientRect().height;
+ const out=fields.animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(6px)'}],{duration:110,easing:'ease-in',fill:'forwards'});authAnimations.push(out);
+ try{await out.finished}catch{return}
+ if(version!==authTransition)return;
+ applyAuthMode(mode);out.cancel();
+ const newHeight=card.getBoundingClientRect().height;
+ const options={duration:240,easing:'cubic-bezier(.2,.7,.2,1)'};
+ authAnimations=[
+ fields.animate([{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],options),
+ intro.animate([{opacity:.6},{opacity:1}],options),
+ card.animate([{height:oldHeight+'px'},{height:newHeight+'px'}],options)
+ ];
+ await Promise.allSettled(authAnimations.map(animation=>animation.finished));
+ if(version===authTransition)authAnimations=[];
+}
+$('#switch-auth-mode').onclick=e=>{e.preventDefault();selectAuthMode(authMode==='signup'?'login':'signup')};applyAuthMode(params.get('mode')==='login'?'login':'signup');
 
 const callingCountries=[['SY','سوريا','963'],['LB','لبنان','961'],['JO','الأردن','962'],['IQ','العراق','964'],['SA','السعودية','966'],['AE','الإمارات','971'],['KW','الكويت','965'],['QA','قطر','974'],['BH','البحرين','973'],['OM','عُمان','968'],['YE','اليمن','967'],['PS','فلسطين','970'],['EG','مصر','20'],['SD','السودان','249'],['LY','ليبيا','218'],['TN','تونس','216'],['DZ','الجزائر','213'],['MA','المغرب','212'],['TR','تركيا','90'],['DE','ألمانيا','49'],['NL','هولندا','31'],['RO','رومانيا','40'],['FR','فرنسا','33'],['GB','المملكة المتحدة','44'],['US','الولايات المتحدة','1'],['CA','كندا','1'],['AU','أستراليا','61'],['OTHER','مفتاح آخر','']];
 $('#country-code').innerHTML=callingCountries.map(([iso,name,code])=>'<option value="'+iso+'">'+name+(code?' (+'+code+')':'')+'</option>').join('');
