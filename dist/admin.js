@@ -27,8 +27,24 @@ function clearServiceImage(){serviceImage=null;$('#service-image').value='';$('#
 $('#remove-service-image').onclick=()=>{imageVersion++;imageBusy=false;$('#next-step').disabled=false;$('#save-service').disabled=false;clearServiceImage()};
 let imageVersion=0;
 $('#service-image').onchange=async()=>{const file=$('#service-image').files[0];if(!file)return;const version=++imageVersion;imageBusy=true;$('#next-step').disabled=true;$('#save-service').disabled=true;$('#image-feedback').textContent='جارٍ تجهيز الصورة…';try{const data=await OwaysImages.prepare(file);if(version!==imageVersion)return;serviceImage=data;$('#service-image-preview').src=data;$('#image-preview').hidden=false;$('#image-feedback').textContent='الصورة جاهزة. حُفظت أبعادها داخل مساحة 960 × 600 دون قطع المحتوى.'}catch(e){if(version!==imageVersion)return;$('#service-image').value='';$('#image-feedback').textContent=e.message+(serviceImage?' الصورة السابقة ما زالت محفوظة.':'');status(e.message);$('#admin-notice').classList.add('error')}finally{if(version===imageVersion){imageBusy=false;$('#next-step').disabled=false;$('#save-service').disabled=false}}};
-async function loadContact(){const r=await api('/api/admin/contact');for(const key of ['whatsapp','email','phone','hours','address'])$('#contact-form').elements[key].value=r[key]||''}
-$('#contact-form').onsubmit=e=>{e.preventDefault();run(async()=>{await api('/api/admin/contact',Object.fromEntries(new FormData(e.target)));status('تم حفظ معلومات التواصل.')})};
+async function loadContact(){const r=await api('/api/admin/contact');for(const key of ['whatsapp','email','phone','hours','address'])$('#contact-form').elements[key].value=r[key]||'';renderContactPreview();$('#contact-save-state').textContent=''}
+
+$('#contact-form').onsubmit=e=>{e.preventDefault();run(async()=>{
+ const form=e.target,data=Object.fromEntries(new FormData(form));let invalid;
+ for(const key of ['whatsapp','phone','email','hours','address'])data[key]=data[key].trim();
+ for(const key of ['whatsapp','phone']){
+  data[key]=cleanContactNumber(data[key]);
+  const field=form.elements[key],error=document.querySelector('[data-contact-error="'+key+'"]');
+  const valid=!data[key]||/^\+?[1-9][0-9]{7,14}$/.test(data[key]);
+  error.textContent=valid?'':'أدخل رقمًا دوليًا صحيحًا مع مفتاح الدولة، مثل +9639XXXXXXXX.';
+  field.setAttribute('aria-invalid',String(!valid));field.classList.toggle('field-invalid',!valid);
+  if(!valid&&!invalid)invalid=field;
+ }
+ if(invalid){invalid.focus();return}
+ $('#contact-save-state').textContent='جارٍ حفظ معلومات التواصل…';
+ try{await api('/api/admin/contact',data);for(const key of ['whatsapp','phone'])form.elements[key].value=data[key];renderContactPreview();$('#contact-save-state').textContent='تم حفظ آخر تعديلاتك.';status('تم حفظ معلومات التواصل.')}catch(error){$('#contact-save-state').textContent='تعذر الحفظ. بياناتك ما زالت موجودة، حاول مجددًا.';throw error}
+})};
+
 
 document.addEventListener('keydown',event=>{
  if(event.key!=='Enter'||event.isComposing||event.shiftKey||event.ctrlKey||event.altKey||event.metaKey)return;
@@ -92,3 +108,24 @@ quickCategoryForm.onsubmit=async event=>{
   try{await refresh();$('#category-select').value=String(result.id)}catch{status('تم حفظ التصنيف. تعذر تحديث القائمة، أعد تحديثها لاحقًا.')}
  }catch(error){feedback.textContent=error.message}
 };
+
+function cleanContactNumber(value){
+ let number=value.replace(/[٠-٩۰-۹]/g,c=>String(c.charCodeAt(0)>=1776?c.charCodeAt(0)-1776:c.charCodeAt(0)-1632)).replace(/[^+0-9]/g,'');
+ if(number.startsWith('00'))number='+'+number.slice(2);
+ return number;
+}
+function renderContactPreview(){
+ const form=$('#contact-form'),labels={whatsapp:'واتساب',phone:'الهاتف',email:'البريد الإلكتروني',hours:'أوقات العمل',address:'العنوان'};
+ const container=$('#contact-preview-items');container.replaceChildren();
+ for(const [key,label]of Object.entries(labels)){
+  const value=form.elements[key].value.trim();if(!value)continue;
+  const row=document.createElement('div'),title=document.createElement('small'),text=document.createElement('span');
+  row.className='contact-preview-row';title.textContent=label;text.textContent=value;if(['whatsapp','phone','email'].includes(key))text.dir='ltr';row.append(title,text);container.append(row);
+ }
+ if(!container.children.length){const p=document.createElement('p');p.textContent='أضف وسيلة تواصل لتظهر هنا.';container.append(p)}
+}
+$('#contact-form').addEventListener('input',event=>{
+ const field=event.target;if(['whatsapp','phone'].includes(field.name))field.value=cleanContactNumber(field.value);
+ const error=document.querySelector('[data-contact-error="'+field.name+'"]');if(error)error.textContent='';
+ field.removeAttribute('aria-invalid');$('#contact-save-state').textContent='لديك تعديلات لم تُحفظ بعد.';renderContactPreview();
+});
