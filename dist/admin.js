@@ -17,7 +17,7 @@ $('#category-form').onsubmit=e=>{e.preventDefault();run(async()=>{await api('/ap
 
 let serviceStep=0;function setServiceStep(index){serviceStep=index;document.querySelectorAll('[data-service-step]').forEach(el=>el.hidden=Number(el.dataset.serviceStep)!==index);document.querySelectorAll('[data-step-label]').forEach(el=>el.classList.toggle('active',Number(el.dataset.stepLabel)===index));$('#previous-step').hidden=index===0;$('#next-step').hidden=index===3;$('#save-service').hidden=index!==3;$('#wizard-status').textContent='الخطوة '+(index+1)+' من 4'}
 $('#next-step').onclick=()=>{const active=document.querySelector('[data-service-step="'+serviceStep+'"]');for(const field of active.querySelectorAll('input,select,textarea'))if(!field.checkValidity()){status('تحقق من الحقل: '+(field.closest('label')?.childNodes[0]?.textContent?.trim()||'بيانات الخدمة'));$('#admin-notice').classList.add('error');field.reportValidity();return}if(serviceStep===0&&!$('#category-select').value){status('أضف تصنيفًا أولًا من قسم التصنيفات.');return}setServiceStep(Math.min(3,serviceStep+1))};$('#previous-step').onclick=()=>setServiceStep(Math.max(0,serviceStep-1));
-const serviceForm=$('#service-form');serviceForm.noValidate=true;serviceForm.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.isComposing&&!event.shiftKey&&['INPUT','SELECT'].includes(event.target.tagName)&&event.target.type!=='file'&&serviceStep<3){event.preventDefault();$('#next-step').click()}});
+const serviceForm=$('#service-form');serviceForm.noValidate=true;
 const kind=serviceForm.elements.kind;function updateDuration(){const subscription=kind.value==='subscription';for(const key of ['duration_value','duration_unit']){const field=serviceForm.elements[key];field.disabled=!subscription;field.required=subscription;field.closest('label').hidden=!subscription}}kind.addEventListener('change',updateDuration);updateDuration();serviceForm.elements.pricing_mode.addEventListener('change',()=>{const price=serviceForm.elements.price;price.required=serviceForm.elements.pricing_mode.value==='fixed';price.disabled=!price.required;price.closest('label').hidden=!price.required});serviceForm.elements.pricing_mode.dispatchEvent(new Event('change'));setServiceStep(0);
 
 function dismissAdminNotice(){const notice=$('#admin-notice');if(notice.hidden)return;notice.hidden=true;if(!matchMedia('(prefers-reduced-motion: reduce)').matches){notice.hidden=false;const animation=notice.animate([{opacity:1,transform:'translateX(-50%) translateY(0)'},{opacity:0,transform:'translateX(-50%) translateY(10px)'}],{duration:160,easing:'ease-in'});animation.finished.then(()=>notice.hidden=true).catch(()=>{})}}
@@ -29,7 +29,28 @@ let imageVersion=0;
 $('#service-image').onchange=async()=>{const file=$('#service-image').files[0];if(!file)return;const version=++imageVersion;imageBusy=true;$('#next-step').disabled=true;$('#save-service').disabled=true;$('#image-feedback').textContent='جارٍ تجهيز الصورة…';try{const data=await OwaysImages.prepare(file);if(version!==imageVersion)return;serviceImage=data;$('#service-image-preview').src=data;$('#image-preview').hidden=false;$('#image-feedback').textContent='الصورة جاهزة. حُفظت أبعادها داخل مساحة 960 × 600 دون قطع المحتوى.'}catch(e){if(version!==imageVersion)return;$('#service-image').value='';$('#image-feedback').textContent=e.message+(serviceImage?' الصورة السابقة ما زالت محفوظة.':'');status(e.message);$('#admin-notice').classList.add('error')}finally{if(version===imageVersion){imageBusy=false;$('#next-step').disabled=false;$('#save-service').disabled=false}}};
 async function loadContact(){const r=await api('/api/admin/contact');for(const key of ['whatsapp','email','phone','hours','address'])$('#contact-form').elements[key].value=r[key]||''}
 $('#contact-form').onsubmit=e=>{e.preventDefault();run(async()=>{await api('/api/admin/contact',Object.fromEntries(new FormData(e.target)));status('تم حفظ معلومات التواصل.')})};
-document.addEventListener('keydown',event=>{if(event.key!=='Enter'||event.isComposing||event.shiftKey||event.ctrlKey||event.altKey||event.metaKey)return;if(event.target.tagName==='TEXTAREA')return;const form=event.target.closest('form');if(!form||form.id==='service-form')return;if(event.target.tagName==='INPUT'){event.preventDefault();form.requestSubmit()}});
+
+document.addEventListener('keydown',event=>{
+ if(event.key!=='Enter'||event.isComposing||event.shiftKey||event.ctrlKey||event.altKey||event.metaKey)return;
+ const field=event.target,form=field.closest('form');
+ if(!form||!['INPUT','SELECT'].includes(field.tagName)||['file','checkbox','radio','submit','button'].includes(field.type))return;
+ event.preventDefault();
+ if(!field.checkValidity()){
+  status('أكمل الحقل الحالي بشكل صحيح قبل الانتقال.');
+  $('#admin-notice').classList.add('error');field.classList.add('field-invalid');field.focus();field.reportValidity();return;
+ }
+ field.classList.remove('field-invalid');
+ const scope=form.id==='service-form'?document.querySelector('[data-service-step="'+serviceStep+'"]'):form;
+ const fields=[...scope.querySelectorAll('input,select,textarea')].filter(el=>!el.disabled&&el.type!=='hidden'&&el.getClientRects().length>0&&!['file','checkbox','radio','submit','button'].includes(el.type));
+ const next=fields[fields.indexOf(field)+1];
+ if(next){next.focus();return}
+ if(form.id==='service-form'&&serviceStep<3){$('#next-step').click();const step=document.querySelector('[data-service-step="'+serviceStep+'"]');step.querySelector('input:not([type=hidden]),select,textarea,button')?.focus();return}
+ // The final Enter moves to the save button; a second Enter confirms the save.
+ const submit=form.querySelector('button[type=submit]:not([hidden]),button:not([type])');
+ if(submit&&!submit.disabled)submit.focus();
+});
+document.addEventListener('input',event=>{if(event.target.matches('input,select,textarea')&&event.target.checkValidity())event.target.classList.remove('field-invalid')});
+
 document.querySelectorAll('form').forEach(form=>form.addEventListener('invalid',event=>{status('يرجى مراجعة الحقل المحدد وإكمال البيانات المطلوبة.');$('#admin-notice').classList.add('error')},true));
 
 function showSuccess(message){$('#admin-notice').hidden=true;$('#success-message').textContent=message;const dialog=$('#success-card');if(!dialog.open)dialog.showModal();$('#confirm-success').focus()}
