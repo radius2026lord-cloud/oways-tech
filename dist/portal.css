@@ -90,3 +90,19 @@
 .account-page .phone-entry #phone-number{grid-column:2;text-align:left;letter-spacing:.5px}
 .account-page #country-picker::placeholder,.account-page #phone-number::placeholder{font-size:11px;letter-spacing:0}
 @media(max-width:380px){.account-page .phone-entry{grid-template-columns:1fr}.account-page .phone-entry #country-picker,.account-page .phone-entry #phone-number{grid-column:1}}
+
+/* Balanced phone verification card. */
+.account-page .verify-form{text-align:center;display:flex;flex-direction:column;align-items:stretch;gap:14px}
+.account-page .verify-form h3{font-size:23px;margin:0}
+.account-page .verify-description{margin:0;font-size:13px;line-height:1.8}
+.account-page #verify-phone{display:block;font-size:19px;color:var(--cyan);letter-spacing:.6px;text-align:center}
+.account-page .verify-form label{display:block;text-align:right;margin:4px 0 0}
+.account-page .verify-form input{display:block;width:100%;max-width:none;height:56px;min-height:56px;margin:8px 0 0;text-align:center;font-size:26px;letter-spacing:8px;padding-inline:16px}
+.account-page .verify-form .button{width:100%;min-height:46px;margin:0}
+.account-page .verify-form #change-number{min-height:42px;font-size:12px}
+.account-page .auth-card.verifying .auth-step .step-dot:first-child{background:#64d8ff12;color:#b6cbdc}
+.account-page .auth-card.verifying .auth-step .step-dot:last-child{background:var(--cyan);border-color:var(--cyan);color:#07111e}
+.account-page .auth-feedback:not(.error){border-color:#386679;background:#123044}
+.account-page .auth-feedback:not(.error) p{color:#c8edf8}
+.account-page .auth-card.verifying .auth-intro{align-items:flex-start}
+@media(max-width:560px){.account-page .verify-form{gap:12px}.account-page .verify-form h3{font-size:21px}.account-page .verify-form input{font-size:24px;letter-spacing:7px}.account-page #verify-phone{font-size:18px}}
