@@ -175,3 +175,5 @@
 .admin-page .service-progress span{padding:12px;border-radius:10px}
 @media(max-width:1000px){.admin-service-grid{grid-template-columns:1fr}}
 @media(max-width:760px){.service-tools{align-items:stretch;flex-direction:column;gap:12px}.service-search{grid-template-columns:1fr;padding:14px}.admin-service-card{padding:18px}.admin-page #service-form>[data-service-step="0"]{grid-template-columns:1fr}.service-package-row{flex-wrap:wrap}.package-price{text-align:right}}
+
+.admin-notice{cursor:pointer}.admin-notice:focus-visible{outline:2px solid var(--cyan);outline-offset:4px}
