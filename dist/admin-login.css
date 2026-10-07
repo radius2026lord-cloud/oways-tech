@@ -81,3 +81,17 @@
  .admin-intro-copy h2{font-size:24px}
  #login-feedback{padding:8px 12px}
 }
+
+/* Isolate this form from the marketing page's generic form and input rules. */
+.admin-auth-page #admin-login-form{padding:0;margin:0;border:0;border-radius:0;background:transparent}
+.admin-auth-page .admin-auth-field>label,.admin-auth-page .admin-remember{margin:0}
+.admin-auth-page .admin-auth-input input{margin:0;padding:0;border-radius:0;text-align:right;line-height:normal;align-self:stretch}
+.admin-auth-page .admin-auth-input input:focus{box-shadow:none}
+.admin-auth-page .admin-remember input{margin:0;padding:0;flex-shrink:0}
+.admin-auth-page .admin-login-intro{align-items:center;text-align:center;gap:0}
+.admin-auth-page .admin-intro-copy p{max-width:290px;margin-inline:auto}
+.admin-auth-page .admin-intro-footer{margin-top:28px;padding-top:0}
+.admin-auth-page .admin-intro-art{width:100%;margin-block:26px}
+.admin-auth-page .admin-intro-copy h2{margin-block:8px 12px}
+@media(min-width:721px){.admin-auth-page .admin-login-intro{justify-content:center}.admin-auth-page .admin-login-intro>.admin-auth-brand{margin-bottom:auto}.admin-auth-page .admin-intro-footer{margin-top:auto;padding-top:28px}.admin-auth-page .admin-intro-copy{margin-bottom:24px}}
+@media(max-height:620px){.admin-auth-page .admin-intro-art{margin-block:12px}.admin-auth-page .admin-intro-footer{padding-top:12px}.admin-auth-page .admin-intro-copy{margin-bottom:12px}}
