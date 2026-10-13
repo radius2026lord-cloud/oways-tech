@@ -40,6 +40,10 @@ render();
  try{
   const response=await fetch('/api/contact');if(!response.ok)return;
   const contact=await response.json();
+  const whatsappNumber=String(contact.whatsapp||'').replace(/[^0-9]/g,'');
+  const floatingWhatsApp=document.querySelector('#floating-whatsapp');
+  if(floatingWhatsApp&&/^[1-9]\d{7,14}$/.test(whatsappNumber)){floatingWhatsApp.href='https://wa.me/'+whatsappNumber;floatingWhatsApp.style.removeProperty('display');}
+
   const paths={
    whatsapp:'M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z',
    phone:'M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8 9.7a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 2 2.3Z',
