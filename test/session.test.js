@@ -1,0 +1,3 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {sessionDays,sessionCookie} from '../server/session.js';
+test('ordinary and remembered sessions exceed thirty minutes',()=>{assert.equal(sessionDays(false),1);assert.equal(sessionDays(true),30);assert.ok(sessionDays(false)*86400>=1800);assert.ok(sessionDays(true)*86400>=1800);assert.equal(sessionDays('true'),1)});
+test('session cookies keep credentials private and secure in production',()=>{const c=sessionCookie('token',true,true);assert.match(c,/HttpOnly/);assert.match(c,/SameSite=Lax/);assert.match(c,/Max-Age=2592000/);assert.match(c,/Secure/);assert.doesNotMatch(sessionCookie('token',false,false),/Max-Age|Secure/)});

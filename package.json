@@ -7,12 +7,14 @@
     "node": ">=22"
   },
   "scripts": {
-    "start": "node --env-file=.env server/index.js",
-    "dev": "node --env-file=.env --watch server/index.js",
+    "start": "node --env-file-if-exists=.env server/index.js",
+    "dev": "node --env-file-if-exists=.env --watch server/index.js",
     "test": "node --test test/*.test.js",
     "db:init": "node --env-file=.env scripts/init-db.js",
     "admin:grant": "node --env-file=.env scripts/grant-admin.js",
-    "admin:setup": "node --env-file=.env scripts/admin-setup.js"
+    "admin:setup": "node --env-file=.env scripts/admin-setup.js",
+    "db:migrate": "node --env-file-if-exists=.env scripts/migrate.js",
+    "customer:password": "node --env-file-if-exists=.env scripts/customer-password.js"
   },
   "dependencies": {
     "mysql2": "^3.15.0"

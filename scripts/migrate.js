@@ -1,0 +1,1 @@
+import {readFile} from 'node:fs/promises';import {pool,rows} from '../server/db.js';try{const sql=await readFile(new URL('../database/002_customer_passwords.sql',import.meta.url),'utf8');await rows(sql);console.log('Customer password migration complete. Existing data retained.')}finally{await pool.end()}
