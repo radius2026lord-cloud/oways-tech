@@ -95,3 +95,14 @@
 .admin-auth-page .admin-intro-copy h2{margin-block:8px 12px}
 @media(min-width:721px){.admin-auth-page .admin-login-intro{justify-content:center}.admin-auth-page .admin-login-intro>.admin-auth-brand{margin-bottom:auto}.admin-auth-page .admin-intro-footer{margin-top:auto;padding-top:28px}.admin-auth-page .admin-intro-copy{margin-bottom:24px}}
 @media(max-height:620px){.admin-auth-page .admin-intro-art{margin-block:12px}.admin-auth-page .admin-intro-footer{padding-top:12px}.admin-auth-page .admin-intro-copy{margin-bottom:12px}}
+
+/* The wrapper supplies one color to both typed and autofilled text areas. */
+.admin-auth-page .admin-auth-input{--field-fill:#081626;background-color:var(--field-fill)}
+.admin-auth-page .admin-auth-input:focus-within{--field-fill:#0b1c2e;background-color:var(--field-fill)}
+.admin-auth-page .admin-auth-input input{color:#eff7ff;caret-color:#64d8ff;align-self:stretch}
+.admin-auth-page .admin-auth-input input:-webkit-autofill,.admin-auth-page .admin-auth-input input:-webkit-autofill:focus{
+ -webkit-text-fill-color:#eff7ff!important;
+ -webkit-box-shadow:0 0 0 1000px var(--field-fill) inset!important;
+ box-shadow:0 0 0 1000px var(--field-fill) inset!important;
+}
+.admin-auth-page .admin-auth-input input:autofill{box-shadow:0 0 0 1000px var(--field-fill) inset!important}

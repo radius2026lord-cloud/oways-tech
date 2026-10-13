@@ -72,3 +72,19 @@ img{max-width:100%;height:auto}.product h3,.web-card h3,.contact-detail-info,.ac
 @media(max-width:760px){.wrap{width:min(1180px,calc(100% - 32px))}.three{grid-template-columns:1fr}.nav{gap:12px;flex-wrap:wrap}.nav-actions{flex-wrap:wrap;max-width:100%;gap:8px}.hero,.split-panel,.ads-panel{grid-template-columns:minmax(0,1fr)}.section-head{flex-wrap:wrap;gap:12px}.actions,.hero-notes{flex-wrap:wrap}.platform-strip>.wrap{flex-wrap:wrap;justify-content:center;padding-block:20px;gap:20px}.hero-art{overflow:hidden;width:100%}.split-panel{padding:24px;gap:24px}.ads-panel{gap:28px}.footer-top{grid-template-columns:repeat(2,minmax(0,1fr))}.section{padding-block:40px}.account-card{max-width:100%}}
 @media(max-width:420px){.wrap{width:calc(100% - 24px)}.four,.footer-top{grid-template-columns:1fr}.actions .button{width:100%}.hero h1{font-size:34px;letter-spacing:0}.section h2{font-size:26px}.product,.web-card{padding:22px}.nav-actions .account-info strong{max-width:110px}.button{max-width:100%;white-space:normal;gap:10px}.hero-art{height:300px}.social-cards article{padding-inline-end:60px}.tag{white-space:normal}.footer-bottom{flex-wrap:wrap;gap:10px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Keep browser-saved credentials readable in the dark input theme. */
+input,select,textarea{color-scheme:dark;caret-color:var(--cyan)}
+input::selection,textarea::selection{background:#267396;color:#fff}
+input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus,input:-webkit-autofill:active{
+ -webkit-text-fill-color:#eff7ff!important;caret-color:#64d8ff!important;
+ -webkit-box-shadow:0 0 0 1000px var(--field-fill,#0a1728) inset!important;
+ box-shadow:0 0 0 1000px var(--field-fill,#0a1728) inset!important;
+ background-color:var(--field-fill,#0a1728)!important;
+}
+input:autofill,input:autofill:hover,input:autofill:focus{
+ color:#eff7ff!important;caret-color:#64d8ff!important;
+ box-shadow:0 0 0 1000px var(--field-fill,#0a1728) inset!important;
+}
+.customer-password-entry{--field-fill:#091726}
+.customer-password-entry:focus-within{--field-fill:#091726}
