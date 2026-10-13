@@ -106,3 +106,4 @@
  box-shadow:0 0 0 1000px var(--field-fill) inset!important;
 }
 .admin-auth-page .admin-auth-input input:autofill{box-shadow:0 0 0 1000px var(--field-fill) inset!important}
+@media(max-width:760px){.admin-password-toggle{width:44px;height:44px}.admin-remember{min-height:44px}}
