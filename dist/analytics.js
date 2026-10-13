@@ -1,0 +1,1 @@
+(()=>{if(navigator.doNotTrack==='1')return;fetch('/api/visits',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({page:location.pathname}),keepalive:true}).catch(()=>{})})();
