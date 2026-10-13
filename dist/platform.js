@@ -2,7 +2,38 @@
 document.addEventListener('click',e=>{const service=e.target.closest('[data-add]'),support=e.target.closest('[data-contact]');if(service||support){e.preventDefault();e.stopImmediatePropagation();location.href=service?'/service?slug='+encodeURIComponent(service.dataset.add):'/account?intent=support&reason='+encodeURIComponent(support.dataset.contact)}},true);
 const checkout=document.querySelector('#checkout');checkout.onclick=()=>{location.href='/account'};
 document.querySelector('#renew-form').onsubmit=e=>{e.preventDefault();location.href='/account?intent=support&reason='+encodeURIComponent('طلب تجديد '+document.querySelector('#service').value+' — '+document.querySelector('#reference').value)};
-(async()=>{try{const response=await fetch('/api/catalog');if(!response.ok)return;const data=await response.json();if(!data.services.length)return;const e=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const section=document.createElement('section');section.className='section wrap';section.id='managed-services';section.innerHTML='<div class="section-head"><div><div class="eyebrow">خدمات المنصة</div><h2>اختر الخدمة التي <span>تناسبك.</span></h2></div></div>'+data.categories.map(c=>{const services=data.services.filter(s=>String(s.category_id)===String(c.id));if(!services.length)return '';return `<h3>${e(c.name)}</h3><div class="grid three">${services.map(s=>`<article class="web-card">${s.images?.[0]?.src?`<img src="${e(s.images[0].src)}" alt="${e(s.images[0].alt||s.name)}" class="catalog-image" loading="lazy">`:'' }<h3>${e(s.name)}</h3><p>${e(s.description)}</p><ul>${(Array.isArray(s.features)?s.features:[]).map(f=>`<li>${e(f)}</li>`).join('')}</ul><a class="button" href="/service?slug=${encodeURIComponent(s.slug)}">عرض التفاصيل والباقات ←</a></article>`).join('')}</div>`}).join('');document.querySelector('#subscriptions').before(section)}catch{/* Static showcase remains available when the API is not running. */}})();
+(async()=>{
+try{
+const response=await fetch('/api/catalog');if(!response.ok)return;
+const data=await response.json();if(!data.services.length)return;
+const e=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const categories=data.categories.filter(c=>data.services.some(s=>String(s.category_id)===String(c.id)));
+const section=document.createElement('section');section.className='section wrap shop-catalog';section.id='managed-services';
+section.innerHTML='<div class="section-head"><div><div class="eyebrow">خدمات المنصة</div><h2>اشتراكات وخدمات <span>تناسبك.</span></h2></div></div><div class="catalog-search"><label for="catalog-query">ابحث عن خدمة</label><input id="catalog-query" type="search" placeholder="اسم الخدمة أو وصفها…" autocomplete="off"></div><div class="catalog-filters" role="group" aria-label="تصفية الخدمات حسب التصنيف"></div><p id="catalog-results" class="fine" role="status"></p><div id="catalog-groups"></div>';
+document.querySelector('#subscriptions').before(section);
+let selected='',query='';
+const filters=section.querySelector('.catalog-filters');
+filters.innerHTML=[{id:'',name:'جميع الخدمات'},...categories].map(c=>'<button class="catalog-filter" type="button" data-category="'+e(c.id)+'" aria-pressed="'+(c.id===''?'true':'false')+'">'+e(c.name)+'</button>').join('');
+function card(s){
+const packages=s.packages||[],fixed=packages.filter(p=>p.pricing_mode==='fixed'&&p.price!==null);
+const currency=fixed[0]?.currency,prices=fixed.filter(p=>p.currency===currency).map(p=>Number(p.price)).filter(Number.isFinite);
+const price=prices.length?'<bdi>'+e(Math.min(...prices))+' '+e(currency)+'</bdi>':'حسب عرض السعر';
+const images=typeof s.images==='string'?JSON.parse(s.images):s.images;
+return '<article class="shop-service-card"><a class="shop-service-image" href="/service?slug='+encodeURIComponent(s.slug)+'" aria-label="'+e('تفاصيل '+s.name)+'">'+(images?.[0]?.src?'<img src="'+e(images[0].src)+'" alt="'+e(images[0].alt||s.name)+'" loading="lazy" decoding="async">':'<span class="shop-image-placeholder">'+e(s.name)+'</span>')+'</a><div class="shop-service-content"><h3>'+e(s.name)+'</h3><p>'+e(s.description||'')+'</p><div class="shop-service-price">'+(prices.length&&packages.length>1?'<small>ابتداءً من </small>':'')+price+'</div><a class="button" href="/service?slug='+encodeURIComponent(s.slug)+'">التفاصيل والباقات <span aria-hidden="true">←</span></a></div></article>';
+}
+function render(){
+const normalize=v=>String(v||'').normalize('NFKC').toLocaleLowerCase();
+const services=data.services.filter(s=>(!selected||String(s.category_id)===selected)&&(!query||normalize(s.name+' '+s.description+' '+(s.features||[]).join(' ')).includes(normalize(query))));
+section.querySelector('#catalog-results').textContent='عرض '+services.length+' من '+data.services.length+' خدمة';
+section.querySelector('#catalog-groups').innerHTML=services.length?categories.filter(c=>!selected||String(c.id)===selected).map(c=>{const items=services.filter(s=>String(s.category_id)===String(c.id));if(!items.length)return '';return '<section class="shop-category"><div class="shop-category-heading"><h3>'+e(c.name)+'</h3><span>'+items.length+' خدمات</span></div><div class="shop-service-grid">'+items.map(card).join('')+'</div></section>';}).join(''):'<div class="admin-empty"><h3>لا توجد خدمات مطابقة</h3><p>جرّب اسمًا آخر أو اختر جميع الخدمات.</p><button type="button" class="button outline" id="catalog-clear">مسح البحث والفلترة</button></div>';
+filters.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.category===selected)));
+const clear=section.querySelector('#catalog-clear');if(clear)clear.onclick=()=>{selected='';query='';section.querySelector('#catalog-query').value='';render()};
+}
+filters.addEventListener('click',event=>{const button=event.target.closest('[data-category]');if(!button)return;selected=button.dataset.category;render()});
+section.querySelector('#catalog-query').addEventListener('input',event=>{query=event.target.value.trim();render()});
+render();
+}catch{/* Keep the existing showcase available if the catalog cannot load. */}
+})();
 
 
 (async()=>{
