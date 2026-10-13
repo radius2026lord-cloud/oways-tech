@@ -38,8 +38,7 @@ const countryLabel=([iso,name,code])=>name+(code?' (+'+code+')':'');
 $('#country-code').innerHTML=callingCountries.map(c=>'<option value="'+c[0]+'">'+countryLabel(c)+'</option>').join('');
 $('#country-options').innerHTML=callingCountries.map(c=>'<option value="'+countryLabel(c)+'"></option>').join('');
 function digits(value){return value.replace(/[٠-٩۰-۹]/g,c=>String(c.charCodeAt(0)>=1776?c.charCodeAt(0)-1776:c.charCodeAt(0)-1632)).replace(/[^0-9]/g,'')}
-let suggested='';for(const language of navigator.languages||[navigator.language]){try{const region=new Intl.Locale(language).region;if(callingCountries.some(c=>c[0]===region)){suggested=region;break}}catch{}}
-let selectedCountry=callingCountries.find(c=>c[0]===(suggested||'SY')),previousCode=selectedCountry[2];
+let selectedCountry=callingCountries.find(c=>c[0]==='SY'),previousCode=selectedCountry[2];
 $('#country-code').value=selectedCountry[0];$('#country-picker').value=countryLabel(selectedCountry);$('#phone-number').value=previousCode;
 $('#country-hint').textContent='ابحث عن الدولة، ثم أكمل رقم هاتفك بعد المفتاح. أرقام فقط.';
 const customLabel=document.createElement('label');customLabel.className='custom-calling-code';customLabel.hidden=true;customLabel.innerHTML='مفتاح الدولة<input id="custom-country-code" inputmode="numeric" dir="ltr" placeholder="مثال: 39" maxlength="3">';$('.phone-field').append(customLabel);
