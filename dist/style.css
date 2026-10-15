@@ -120,3 +120,5 @@ input,select,textarea{scroll-margin-block:90px}
 }
 @media(max-width:360px){.storefront-page .brand b{font-size:15px}.storefront-page header .nav{gap:6px}.storefront-page header .nav>.nav-actions{gap:5px}.storefront-page .account-card.signed-in .account-info{display:none}}
 @media(prefers-reduced-motion:reduce){.floating-whatsapp{transition:none}}
+
+@media(max-width:760px){.storefront-page .nav-actions .account-avatar svg,.storefront-page .cart-toggle svg,.storefront-page #menu svg{width:22px;height:22px;stroke-width:1.7}.storefront-page .account-card.guest .account-card-link,.storefront-page .cart-toggle,.storefront-page #menu{border-radius:13px;border:1px solid #294253;background:#102131;color:#cce6f2;box-sizing:border-box}.storefront-page .account-card.guest{border:0}.storefront-page .cart-toggle #count{min-width:16px;height:16px;font-size:10px;top:-4px;inset-inline-end:-4px}.storefront-page .floating-whatsapp{box-shadow:0 4px 16px #0003}.storefront-page .floating-whatsapp svg{width:27px;height:27px;stroke:none}}

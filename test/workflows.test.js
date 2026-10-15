@@ -4,6 +4,13 @@ const request=async(path,data,cookie)=>{const r=await fetch(base+path,{method:da
 const admin=await request('/api/auth/admin-login',{username:'test_admin',password:'Admin!234',remember:true});assert.equal(admin.status,200);assert.match(admin.cookieHeader,/Secure/);assert.match(admin.cookieHeader,/Max-Age=2592000/);assert.equal(admin.data.user.password_hash,undefined);
 const customer=await request('/api/auth/login',{phone:'+963944111111',password:'Customer!234'});assert.equal(customer.status,200);assert.doesNotMatch(customer.cookieHeader,/Max-Age/);const customer2=await request('/api/auth/login',{phone:'+963944222222',password:'Customer!234'});assert.equal(customer2.status,200);
 assert.equal((await request('/api/admin/customers',undefined,customer.cookie)).status,403);
+assert.equal((await request('/api/admin/categories/1',{name:'Changed'},customer.cookie)).status,403);
+assert.equal((await request('/api/admin/categories/1',{name:'Digital Updated',description:'Details'},admin.cookie)).status,200);
+assert.equal((await request('/api/admin/categories',undefined,admin.cookie)).data.categories[0].name,'Digital Updated');
+assert.equal((await request('/api/admin/categories/1/delete',{},admin.cookie)).status,409);
+assert.equal((await request('/api/admin/categories/2/delete',{},customer.cookie)).status,403);
+assert.equal((await request('/api/admin/categories/2/delete',{},admin.cookie)).status,200);
+assert.equal((await request('/api/admin/categories/2/delete',{},admin.cookie)).status,404);
 const serviceUpdate={id:1,package_id:1,category_id:1,name:'Updated Service',slug:'test-service',description:'Updated',features:['Fast'],kind:'subscription',package_name:'Updated Month',pricing_mode:'fixed',price:'20.00',currency:'USD',duration_value:1,duration_unit:'month',requirements:[],instructions:{},image:null};
 assert.equal((await request('/api/admin/services',serviceUpdate,customer.cookie)).status,403);
 assert.equal((await request('/api/admin/services',{...serviceUpdate,package_id:999},admin.cookie)).status,400);
