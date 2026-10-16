@@ -29,4 +29,14 @@ assert.equal((await request('/api/admin/customers/1/password',{password:'Newpass
 const signup=await request('/api/auth/signup',{phone:'+963944333333',full_name:'New Customer',password:'Customer!456',password_confirmation:'Customer!456'});assert.equal(signup.status,201);assert.equal(signup.data.user.role,'customer');const duplicate=await request('/api/auth/signup',{phone:'+963944333333',full_name:'New Customer',password:'Customer!456',password_confirmation:'Customer!456'});assert.equal(duplicate.status,409);assert.match(duplicate.data.error,/يوجد حساب/);
 const firstVisit=await request('/api/visits',{page:'/'});assert.equal(firstVisit.status,200);assert.equal((await request('/api/visits',{page:'/service'},firstVisit.cookie)).status,200);const visitors=await request('/api/admin/visitors',undefined,admin.cookie);assert.equal(visitors.data.totals.unique_visitors,1);assert.equal(visitors.data.totals.page_views,2);assert.equal((await request('/api/admin/visitors',undefined,renewed.cookie)).status,403);
 assert.equal((await request('/api/auth/logout',{},renewed.cookie)).status,200);assert.equal((await request('/api/auth/me',undefined,renewed.cookie)).status,401);
+const change={current_password:'Admin!234',password:'Changed!567',password_confirmation:'Changed!567'};
+assert.equal((await request('/api/admin/password',change,customer2.cookie)).status,403);
+assert.equal((await request('/api/admin/password',{...change,current_password:'Wrong!234'},admin.cookie)).status,400);
+assert.equal((await request('/api/admin/password',{...change,password_confirmation:'Mismatch!'},admin.cookie)).status,400);
+const secondAdmin=await request('/api/auth/admin-login',{username:'test_admin',password:'Admin!234'});assert.equal(secondAdmin.status,200);
+assert.equal((await request('/api/admin/password',change,admin.cookie)).status,200);
+assert.equal((await request('/api/auth/me',undefined,admin.cookie)).status,401);
+assert.equal((await request('/api/auth/me',undefined,secondAdmin.cookie)).status,401);
+assert.equal((await request('/api/auth/admin-login',{username:'test_admin',password:'Admin!234'})).status,401);
+assert.equal((await request('/api/auth/admin-login',{username:'test_admin',password:'Changed!567'})).status,200);
 }finally{proc.kill('SIGTERM')}});

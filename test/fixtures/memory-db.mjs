@@ -24,6 +24,8 @@ if(sql==='SELECT * FROM categories ORDER BY sort_order,id')return copy(state.cat
 if(sql.startsWith('SELECT id FROM services WHERE category_id='))return state.services.filter(s=>same(s.category_id,args[0])).slice(0,1).map(s=>({id:s.id}));
 if(sql.startsWith('UPDATE categories SET name=')){Object.assign(state.categories.find(c=>same(c.id,args[2])),{name:args[0],description:args[1]});return {affectedRows:1}}
 if(sql.startsWith('DELETE FROM categories WHERE id=')){state.categories=state.categories.filter(c=>!same(c.id,args[0]));return {affectedRows:1}}
+if(sql.startsWith('SELECT password_hash FROM admin_credentials'))return state.credentials[args[0]]?[{password_hash:state.credentials[args[0]]}]:[];
+if(sql.startsWith('UPDATE admin_credentials SET password_hash=')){state.credentials[args[1]]=args[0];return {affectedRows:1}}
 if(sql==='SELECT 1')return [{one:1}];
 if(sql.startsWith('SELECT u.id,u.full_name,u.phone,u.role FROM user_sessions')){const session=state.sessions.find(s=>s.digest===hex(args[0])&&!s.revoked&&s.expires>Date.now());const u=session&&state.users.find(u=>same(u.id,session.user_id)&&u.status==='active');return u?[copy(u)]:[]}
 if(sql.includes('FROM admin_credentials a JOIN users')){return args[0]==='test_admin'?[{...copy(state.users[0]),password_hash:state.credentials[1]}]:[]}
