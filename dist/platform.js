@@ -1,7 +1,7 @@
 // Use capture to gate every existing request/support action before any old local handler.
 document.addEventListener('click',e=>{const service=e.target.closest('[data-add]'),support=e.target.closest('[data-contact]');if(service||support){e.preventDefault();e.stopImmediatePropagation();location.href=service?'/service?slug='+encodeURIComponent(service.dataset.add):'/account?intent=support&reason='+encodeURIComponent(support.dataset.contact)}},true);
 const checkout=document.querySelector('#checkout');checkout.onclick=()=>{location.href='/account'};
-document.querySelector('#renew-form').onsubmit=e=>{e.preventDefault();location.href='/account?intent=support&reason='+encodeURIComponent('طلب تجديد '+document.querySelector('#service').value+' — '+document.querySelector('#reference').value)};
+
 (async()=>{
 try{
 const response=await fetch('/api/catalog');if(!response.ok)return;
