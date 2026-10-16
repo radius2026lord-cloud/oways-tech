@@ -130,7 +130,7 @@ $('#contact-form').addEventListener('input',event=>{
  field.removeAttribute('aria-invalid');$('#contact-save-state').textContent='لديك تعديلات لم تُحفظ بعد.';renderContactPreview();
 });
 
-document.querySelector('#admin-logout').onclick=()=>run(async()=>{await api('/api/auth/logout',{});location.replace('/admin-login')});
+
 
 let editingService=null;
 function resetServiceEditor(){editingService=null;imageVersion++;imageBusy=false;serviceForm.reset();clearServiceImage();$('#requirements').replaceChildren();updateDuration();serviceForm.elements.pricing_mode.dispatchEvent(new Event('change'));setServiceStep(0);$('#save-service').textContent='حفظ الخدمة';}
