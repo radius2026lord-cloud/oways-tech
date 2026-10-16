@@ -82,3 +82,9 @@ render();
 
 /* Tap feedback without intercepting scrolling or delaying navigation. */
 document.addEventListener('pointerdown',event=>{const card=event.target.closest('.shop-service-card');if(!card||matchMedia('(prefers-reduced-motion: reduce)').matches)return;card.classList.add('is-tapped');const clear=()=>{setTimeout(()=>card.classList.remove('is-tapped'),150);document.removeEventListener('pointerup',clear);document.removeEventListener('pointercancel',clear)};document.addEventListener('pointerup',clear,{once:true});document.addEventListener('pointercancel',clear,{once:true});setTimeout(()=>card.classList.remove('is-tapped'),650)},{passive:true});
+
+(()=>{
+const nav=document.querySelector('.mobile-bottom-nav');if(!nav)return;
+function select(){const hash=location.hash;nav.querySelectorAll('a').forEach(link=>{const active=hash?link.getAttribute('href')===hash:link.getAttribute('href')==='/';if(active)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current')})}
+select();window.addEventListener('hashchange',select);
+})();
