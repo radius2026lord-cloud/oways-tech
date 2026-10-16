@@ -201,3 +201,21 @@ header .account-signout svg{width:18px;height:18px;flex-shrink:0}header .account
 .storefront-page header .account-card.signed-in{padding:4px!important;gap:4px!important}.storefront-page header .account-card.signed-in .account-info strong{max-width:54px;font-size:10px}.storefront-page header .account-card.signed-in .account-info small{display:none}.storefront-page header .account-card.signed-in .account-avatar{width:30px;height:30px;padding:5px}.storefront-page header .account-card.signed-in .account-signout{min-width:32px;min-height:44px;padding:5px}.storefront-page header .account-signout span{display:none}
 }
 @media(prefers-reduced-motion:reduce){.back-to-services{transition:none}}
+
+/* Restore readable continuous icon outlines and prevent account/logo overlap. */
+.mobile-bottom-nav svg,.cart-toggle svg,#menu svg,.account-avatar svg,.catalog-filter svg,.contact-detail-icon svg,.ui-icon{stroke-linecap:round!important;stroke-linejoin:round!important;stroke-width:1.8!important}
+@media(max-width:760px){
+.storefront-page header .nav:has(.signed-in){display:grid!important;grid-template-columns:minmax(0,1fr) 44px 44px;gap:10px;align-items:center}
+.storefront-page header .nav:has(.signed-in)>.brand{grid-column:1;grid-row:1;min-width:0;flex:none!important}
+.storefront-page header .nav:has(.signed-in)>.nav-actions{display:contents!important}
+.storefront-page header .nav:has(.signed-in) .cart-toggle{grid-column:2;grid-row:1}
+.storefront-page header .nav:has(.signed-in) #menu{grid-column:3;grid-row:1}
+.storefront-page header .nav:has(.signed-in) .account-card.signed-in{grid-column:1/-1;grid-row:2;display:flex!important;width:100%;min-width:0;box-sizing:border-box;justify-content:space-between;gap:10px!important;padding:9px 12px!important}
+.storefront-page header .nav:has(.signed-in) .account-card-link{min-width:0;flex:1;padding:0;gap:9px}
+.storefront-page header .nav:has(.signed-in) .account-info{display:flex!important;min-width:0;flex:1}
+.storefront-page header .nav:has(.signed-in) .account-info strong{max-width:none;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.storefront-page header .nav:has(.signed-in) .account-info small{display:block;font-size:10px}
+.storefront-page header .nav:has(.signed-in) .account-avatar{width:34px;height:34px;padding:7px}
+.storefront-page header .nav:has(.signed-in) .account-signout{flex:0 0 auto;gap:6px;min-height:44px;padding-inline:10px}
+.storefront-page header .nav:has(.signed-in) .account-signout span{display:block;font-size:11px}
+}
