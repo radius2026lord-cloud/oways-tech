@@ -12,8 +12,9 @@ const section=document.createElement('section');section.className='section wrap 
 section.innerHTML='<div class="section-head"><div><div class="eyebrow">خدمات المنصة</div><h2>اشتراكات وخدمات <span>تناسبك.</span></h2></div></div><div class="catalog-search"><label for="catalog-query">ابحث عن خدمة</label><input id="catalog-query" type="search" placeholder="اسم الخدمة أو وصفها…" autocomplete="off"></div><div class="catalog-filters" role="group" aria-label="تصفية الخدمات حسب التصنيف"></div><p id="catalog-results" class="fine" role="status"></p><div id="catalog-groups"></div>';
 document.querySelector('#subscriptions').before(section);
 let selected='',query='';
+const categoryIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="3"/><path d="M7 3v4M17 3v4M3 10h18M9 15h6M12 12v6"/></svg>';
 const filters=section.querySelector('.catalog-filters');
-filters.innerHTML=[{id:'',name:'جميع الخدمات'},...categories].map(c=>'<button class="catalog-filter" type="button" data-category="'+e(c.id)+'" aria-pressed="'+(c.id===''?'true':'false')+'">'+e(c.name)+'</button>').join('');
+filters.innerHTML=[{id:'',name:'جميع الخدمات'},...categories].map(c=>'<button class="catalog-filter" type="button" data-category="'+e(c.id)+'" aria-pressed="'+(c.id===''?'true':'false')+'">'+categoryIcon+'<span>'+e(c.name)+'</span></button>').join('');
 function card(s){
 const packages=s.packages||[],fixed=packages.filter(p=>p.pricing_mode==='fixed'&&p.price!==null);
 const currency=fixed[0]?.currency,prices=fixed.filter(p=>p.currency===currency).map(p=>Number(p.price)).filter(Number.isFinite);
@@ -25,10 +26,11 @@ function render(){
 const normalize=v=>String(v||'').normalize('NFKC').toLocaleLowerCase();
 const services=data.services.filter(s=>(!selected||String(s.category_id)===selected)&&(!query||normalize(s.name+' '+s.description+' '+(s.features||[]).join(' ')).includes(normalize(query))));
 section.querySelector('#catalog-results').textContent='عرض '+services.length+' من '+data.services.length+' خدمة';
-section.querySelector('#catalog-groups').innerHTML=services.length?categories.filter(c=>!selected||String(c.id)===selected).map(c=>{const items=services.filter(s=>String(s.category_id)===String(c.id));if(!items.length)return '';return '<section class="shop-category"><div class="shop-category-heading"><h3>'+e(c.name)+'</h3><span>'+items.length+' خدمات</span></div><div class="shop-service-grid">'+items.map(card).join('')+'</div></section>';}).join(''):'<div class="admin-empty"><h3>لا توجد خدمات مطابقة</h3><p>جرّب اسمًا آخر أو اختر جميع الخدمات.</p><button type="button" class="button outline" id="catalog-clear">مسح البحث والفلترة</button></div>';
+section.querySelector('#catalog-groups').innerHTML=services.length?categories.filter(c=>!selected||String(c.id)===selected).map(c=>{const items=services.filter(s=>String(s.category_id)===String(c.id));if(!items.length)return '';return '<section class="shop-category"><div class="shop-category-heading"><h3>'+e(c.name)+'</h3><button type="button" class="category-view-all" data-view-category="'+e(c.id)+'">'+(selected?items.length+' خدمات':'عرض الكل ←')+'</button></div><div class="shop-service-grid '+(selected||query?'expanded':'')+'">'+items.map(card).join('')+'</div></section>';}).join(''):'<div class="admin-empty"><h3>لا توجد خدمات مطابقة</h3><p>جرّب اسمًا آخر أو اختر جميع الخدمات.</p><button type="button" class="button outline" id="catalog-clear">مسح البحث والفلترة</button></div>';
 filters.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.category===selected)));
 const clear=section.querySelector('#catalog-clear');if(clear)clear.onclick=()=>{selected='';query='';section.querySelector('#catalog-query').value='';render()};
 }
+section.addEventListener('click',event=>{const button=event.target.closest('[data-view-category]');if(!button)return;selected=button.dataset.viewCategory;render();filters.querySelector('[aria-pressed=true]')?.scrollIntoView({block:'nearest',inline:'nearest'});});
 filters.addEventListener('click',event=>{const button=event.target.closest('[data-category]');if(!button)return;selected=button.dataset.category;render()});
 section.querySelector('#catalog-query').addEventListener('input',event=>{query=event.target.value.trim();render()});
 render();
