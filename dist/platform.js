@@ -79,3 +79,6 @@ render();
   if(grid.children.length)document.querySelector('.footer-top').append(block);
  }catch{}
 })();
+
+/* Tap feedback without intercepting scrolling or delaying navigation. */
+document.addEventListener('pointerdown',event=>{const card=event.target.closest('.shop-service-card');if(!card||matchMedia('(prefers-reduced-motion: reduce)').matches)return;card.classList.add('is-tapped');const clear=()=>{setTimeout(()=>card.classList.remove('is-tapped'),150);document.removeEventListener('pointerup',clear);document.removeEventListener('pointercancel',clear)};document.addEventListener('pointerup',clear,{once:true});document.addEventListener('pointercancel',clear,{once:true});setTimeout(()=>card.classList.remove('is-tapped'),650)},{passive:true});
