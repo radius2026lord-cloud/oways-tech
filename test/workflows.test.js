@@ -18,6 +18,24 @@ assert.equal((await request('/api/admin/services',serviceUpdate,admin.cookie)).s
 const edited=await request('/api/admin/services/1',undefined,admin.cookie);assert.equal(edited.data.service.name,'Updated Service');assert.equal(edited.data.service.packages[0].price,'20.00');
 const snapshot=await request('/api/orders/1',undefined,customer.cookie);assert.equal(snapshot.data.items[0].package_snapshot.service_name,'Test Service');
 const catalogStats=await request('/api/admin/services',undefined,admin.cookie);assert.equal(catalogStats.data.popular[0].order_count,1);
+
+// Discounts are computed on the server and frozen into the order, never trusted from client totals.
+assert.equal((await request('/api/admin/services',{...serviceUpdate,discount_percent:-1},admin.cookie)).status,400);
+assert.equal((await request('/api/admin/services',{...serviceUpdate,discount_percent:101},admin.cookie)).status,400);
+assert.equal((await request('/api/admin/services',{...serviceUpdate,discount_percent:10.5},admin.cookie)).status,400);
+assert.equal((await request('/api/admin/services',{...serviceUpdate,pricing_mode:'quote',discount_percent:10},admin.cookie)).status,400);
+assert.equal((await request('/api/admin/services',{...serviceUpdate,discount_percent:25,featured:true,status:'active'},admin.cookie)).status,201);
+const publicCatalog=await request('/api/catalog');assert.equal(publicCatalog.status,200);assert.equal(publicCatalog.data.services[0].featured,true);assert.equal(publicCatalog.data.services[0].packages[0].final_price,'15.00');assert.equal(publicCatalog.data.services[0].packages[0].original_price,'20.00');
+assert.equal((await request('/api/orders',{package_id:1,expected_total:'20.00'},customer.cookie)).status,409);
+const discountedOrder=await request('/api/orders',{package_id:1,price:0,discount_percent:100,expected_total:'15.00'},customer.cookie);assert.equal(discountedOrder.status,201);
+const savedDiscount=await request('/api/orders/'+discountedOrder.data.id,undefined,customer.cookie);assert.equal(savedDiscount.data.total_amount,'15.00');assert.equal(savedDiscount.data.items[0].agreed_price,'15.00');assert.equal(savedDiscount.data.items[0].package_snapshot.discount_percent,25);
+assert.equal((await request('/api/admin/services',{...serviceUpdate,discount_percent:50,status:'unavailable'},admin.cookie)).status,201);
+assert.equal((await request('/api/catalog')).data.services[0].status,'unavailable');assert.equal((await request('/api/orders',{package_id:1},customer.cookie)).status,400);
+assert.equal((await request('/api/orders/'+discountedOrder.data.id,undefined,customer.cookie)).data.total_amount,'15.00');
+const history=await request('/api/orders',undefined,customer.cookie);assert.equal(history.status,200);assert.equal(history.data.orders.find(o=>o.id===discountedOrder.data.id).items[0].package_snapshot.final_price,'15.00');
+assert.equal((await request('/api/admin/homepage',{title:'عنوان جديد'},customer.cookie)).status,403);
+assert.equal((await request('/api/admin/homepage',{title:'عنوان جديد',banner:'عرض خاص',featured_category_ids:['1']},admin.cookie)).status,200);
+assert.equal((await request('/api/catalog')).data.homepage.banner,'عرض خاص');
 assert.equal((await request('/api/admin/services/1/delete',{},customer.cookie)).status,403);
 assert.equal((await request('/api/admin/services/1/delete',{},admin.cookie)).status,200);
 assert.equal((await request('/api/admin/services',undefined,admin.cookie)).data.services.length,0);
