@@ -36,6 +36,7 @@ if(sql.startsWith('UPDATE categories SET name=')){Object.assign(state.categories
 if(sql.startsWith('DELETE FROM categories WHERE id=')){state.categories=state.categories.filter(c=>!same(c.id,args[0]));return {affectedRows:1}}
 if(sql.startsWith('SELECT password_hash FROM admin_credentials'))return state.credentials[args[0]]?[{password_hash:state.credentials[args[0]]}]:[];
 if(sql.startsWith('UPDATE admin_credentials SET password_hash=')){state.credentials[args[1]]=args[0];return {affectedRows:1}}
+if(sql.startsWith("UPDATE users SET status='closed'")){const user=state.users.find(u=>same(u.id,args[0])&&u.role==='customer');if(user)user.status='closed';return {affectedRows:user?1:0}}
 if(sql==='SELECT 1')return [{one:1}];
 if(sql.startsWith('SELECT u.id,u.full_name,u.phone,u.role FROM user_sessions')){const session=state.sessions.find(s=>s.digest===hex(args[0])&&!s.revoked&&s.expires>Date.now());const u=session&&state.users.find(u=>same(u.id,session.user_id)&&u.status==='active');return u?[copy(u)]:[]}
 if(sql.includes('FROM admin_credentials a JOIN users')){return args[0]==='test_admin'?[{...copy(state.users[0]),password_hash:state.credentials[1]}]:[]}
@@ -47,7 +48,7 @@ if(sql.startsWith('INSERT INTO user_sessions')){state.sessions.push({user_id:arg
 if(sql.startsWith('UPDATE user_sessions')){state.sessions.filter(s=>sql.includes('WHERE user_id=')?same(s.user_id,args[0]):s.digest===hex(args[0])).forEach(s=>s.revoked=true);return {affectedRows:1}}
 if(sql.startsWith('INSERT INTO audit_logs')){state.audit.push({actor:args[0],entity:args[1],id:args[2],action:args[3]});return {affectedRows:1}}
 if(sql.startsWith('SELECT id FROM users WHERE id=')){return state.users.filter(u=>same(u.id,args[0])&&u.role==='customer'&&u.status==='active').map(u=>({id:u.id}))}
-if(sql.startsWith('SELECT u.id,u.full_name,u.phone,u.created_at')){return state.users.filter(u=>u.role==='customer').map(u=>({...copy(u),has_password:!!state.credentials[u.id]}))}
+if(sql.startsWith('SELECT u.id,u.full_name,u.phone,u.created_at')){return state.users.filter(u=>u.role==='customer'&&u.status==='active').map(u=>({...copy(u),has_password:!!state.credentials[u.id]}))}
 if(sql.startsWith('SELECT * FROM orders WHERE id=? AND user_id=?'))return copy(state.orders.filter(o=>same(o.id,args[0])&&same(o.user_id,args[1])));
 if(sql.startsWith('SELECT * FROM orders WHERE id=?'))return copy(state.orders.filter(o=>same(o.id,args[0])));
 if(sql.startsWith('SELECT id,public_reference,fulfillment_status'))return copy(state.orders.filter(o=>same(o.user_id,args[0])));
