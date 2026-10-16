@@ -185,3 +185,19 @@ input,select,textarea{scroll-margin-block:90px}
 
 /* Purposefully open symbol contours, matching the supplied icon reference. */
 .mobile-bottom-nav svg,.cart-toggle svg,#menu svg,.account-avatar svg,.catalog-filter svg{stroke-linecap:butt!important;stroke-linejoin:round!important;stroke-width:1.9!important}
+
+.back-to-services{display:inline-flex!important;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:10px 15px;box-sizing:border-box;border:1px solid #43607966;border-radius:14px;background:#173044;color:#c9e9f7!important;text-decoration:none;font:inherit;font-size:13px;white-space:nowrap;transition:background 160ms ease,border-color 160ms ease}.back-to-services svg{width:19px;height:19px;flex-shrink:0}.back-to-services:hover{background:#204157;border-color:#69c6e4}.back-to-services:focus-visible{outline:2px solid #6cd4f5;outline-offset:3px}
+header .account-card.signed-in{display:flex;align-items:center;gap:9px;padding:7px 9px;border:1px solid #44607866;border-radius:17px;background:linear-gradient(135deg,#142e41,#102334);box-shadow:0 3px 10px #0001;min-width:0}
+header .account-card.signed-in .account-card-link{display:flex;align-items:center;gap:9px;padding:0;min-width:0;text-decoration:none}
+header .account-card.signed-in .account-avatar{box-sizing:border-box;display:grid;place-items:center;width:36px;height:36px;padding:8px;border-radius:12px;background:#28546b;color:#b5eaff}
+header .account-card.signed-in .account-avatar svg{width:21px;height:21px}
+header .account-card.signed-in .account-info{display:flex;flex-direction:column;gap:3px;min-width:0}
+header .account-card.signed-in .account-info small{display:block;color:#90aebf;font-size:10px}
+header .account-card.signed-in .account-info strong{display:block;max-width:165px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:13px;color:#ecf8ff;line-height:1.6}
+header .account-card.signed-in .account-signout{display:flex;align-items:center;justify-content:center;gap:5px;min-height:38px;padding:8px;border:0;border-inline-start:1px solid #58728644;border-radius:0;background:transparent;color:#9cb7c9;cursor:pointer}
+header .account-signout svg{width:18px;height:18px;flex-shrink:0}header .account-signout span{font-size:11px}header .account-signout:hover{color:#ffc0c7}
+@media(max-width:760px){
+.account-page:not(.auth-view) header .nav{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px}.account-page:not(.auth-view) header .brand{min-width:0;font-size:16px}.account-page:not(.auth-view) header .back-to-services{font-size:12px;padding:8px 11px}.account-page:not(.auth-view) header .account-card.signed-in{grid-column:1/-1;width:100%;box-sizing:border-box;padding:10px 12px;justify-content:space-between}.account-page:not(.auth-view) header .account-card.signed-in .account-info strong{max-width:210px;font-size:13px}.account-page:not(.auth-view) header .account-card.signed-in .account-signout{min-height:44px;padding-inline:12px}
+.storefront-page header .account-card.signed-in{padding:4px!important;gap:4px!important}.storefront-page header .account-card.signed-in .account-info strong{max-width:54px;font-size:10px}.storefront-page header .account-card.signed-in .account-info small{display:none}.storefront-page header .account-card.signed-in .account-avatar{width:30px;height:30px;padding:5px}.storefront-page header .account-card.signed-in .account-signout{min-width:32px;min-height:44px;padding:5px}.storefront-page header .account-signout span{display:none}
+}
+@media(prefers-reduced-motion:reduce){.back-to-services{transition:none}}
